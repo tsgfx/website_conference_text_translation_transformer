@@ -68,11 +68,12 @@ class Translator:
                 # 中译英处理
                 # 首先检查输入的中文字符
                 logger.info(f"[中译英] 原始输入: {sentence}")
-                
-                # 对中文进行字符级分词
-                chars = list(sentence)
-                tokenized_sentence = " ".join(chars)
-                logger.info(f"[中译英] 字符分词结果: {tokenized_sentence}")
+
+                # 使用 jieba 分词
+                import jieba
+                tokens = jieba.lcut(sentence)
+                tokenized_sentence = " ".join(tokens)
+                logger.info(f"[中译英] Jieba分词结果: {tokenized_sentence}")
                 
                 # 使用 Moses 分词器
                 moses_tokens = self.mose_tokenizer_zh.tokenize(tokenized_sentence)
@@ -82,7 +83,7 @@ class Translator:
                 # BPE 编码前检查词表
                 logger.info(f"[中译英] 词表大小: {len(self.zh2en_zh_tokenizer.word2idx)}")
                 logger.info(f"[中译英] 分词后的tokens: {tokenized_sentence.split()}")
-                
+
                 # BPE 编码
                 encoder_input, attn_mask = self.zh2en_zh_tokenizer.encode(
                     [tokenized_sentence.split()], 
